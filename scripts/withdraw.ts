@@ -14,14 +14,10 @@ export async function run(provider: NetworkProvider) {
         {
             value: toNano('0.02'),
         },
-        {
-            $$type: 'Withdraw',
-            // amount: toNano("0.05")
-        }
+        "withdraw"
     );
     
 
     await provider.waitForDeploy(lottery.address);
 
-    // run methods on `lottery`
 }

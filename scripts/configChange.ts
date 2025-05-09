@@ -12,9 +12,14 @@ export async function run(provider: NetworkProvider) {
     await lottery.send(
         provider.sender(),
         {
-            value: toNano('1'),
+            value: toNano('0.05'),
         },
-        null
+        {
+            $$type: "ChangeConfig",
+            bid: toNano("0.8"),
+            minPrize: toNano("0.525"),
+            maxPrize: toNano("2.25")
+        },
         // {
         //     $$type: 'Withdraw',
         //     amount: toNano("1.249")

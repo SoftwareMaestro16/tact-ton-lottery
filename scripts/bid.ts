@@ -12,7 +12,7 @@ export async function run(provider: NetworkProvider) {
     await lottery.send(
         provider.sender(),
         {
-            value: toNano('0.6'),
+            value: toNano('0.8'),
         },
         'bid'
         

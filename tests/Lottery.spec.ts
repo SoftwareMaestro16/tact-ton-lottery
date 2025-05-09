@@ -24,10 +24,7 @@ describe('Lottery', () => {
             {
                 value: toNano('2'),
             },
-            {
-                $$type: 'Deploy',
-                queryId: 1n
-            },
+            null
         );
 
         expect(deployResult.transactions).toHaveTransaction({

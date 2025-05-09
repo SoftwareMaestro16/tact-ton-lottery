@@ -2,18 +2,20 @@ import "@stdlib/deploy";
 import "@stdlib/ownable";
 import "@stdlib/stoppable";
 
-message Withdraw {
-    
+message ChangeConfig {
+    bid: Int as uint128;
+    minPrize: Int as uint128;
+    maxPrize: Int as uint128;
 }
 
-contract Lottery with Deployable, OwnableTransferable, Stoppable, Resumable {
+const MinTonForStorage: Int = ton("0.02");
+
+contract Lottery with OwnableTransferable, Stoppable, Resumable {
     owner: Address;
     stopped: Bool;
     bid: Int as uint128;
     minPrize: Int as uint128;
     maxPrize: Int as uint128;
-
-    const MinTonForStorage: Int = ton("0.02");
 
     init(bid: Int, minPrize: Int, maxPrize: Int) {
         self.owner = sender();
@@ -25,6 +27,7 @@ contract Lottery with Deployable, OwnableTransferable, Stoppable, Resumable {
 
     receive() {
         // accept tons
+        
     }
 
     receive("stop") {
@@ -76,22 +79,43 @@ contract Lottery with Deployable, OwnableTransferable, Stoppable, Resumable {
                 mode: SendRemainingValue + SendIgnoreErrors, 
                 body: str4.asComment()
             });
-        }
-        
+        }   
     }
 
-    receive(msg: Withdraw) {
+    receive("withdraw") {
         self.requireOwner();
         send(SendParameters{
             to: sender(),
             bounce: true,
-            value: myBalance() - context().value - self.MinTonForStorage,
+            value: myBalance() - context().value - MinTonForStorage,
             mode: SendRemainingValue + SendIgnoreErrors
         });
     }
 
-    get fun bid(): Int {
+    receive(msg: ChangeConfig) {
+        self.requireOwner();
+        self.bid = msg.bid;
+        self.minPrize = msg.minPrize;
+        self.maxPrize = msg.maxPrize;
+
+        send(SendParameters{
+            to: sender(),
+            value: ton("0.0015"),
+            mode: SendIgnoreErrors,
+            body: "config changed".asComment()
+        });
+    }
+
+    get fun get_bid(): Int {
         return self.bid;
+    }
+
+    get fun get_min_prize(): Int {
+        return self.minPrize;
+    }
+
+    get fun get_max_prize(): Int {
+        return self.maxPrize;
     }
     
 }
